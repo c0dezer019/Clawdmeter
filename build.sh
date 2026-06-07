@@ -6,15 +6,15 @@ set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$root"
 
-if [ ! -d venv ]; then
-    python3 -m venv venv
+if [ ! -d .venv ]; then
+    python3 -m venv .venv
 fi
 
-venv/bin/python -m pip install --upgrade pip
-venv/bin/pip install -r requirements.txt
-venv/bin/pip install pyinstaller==6.20.0
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install pyinstaller==6.20.0
 
-venv/bin/pyinstaller --clean Clawdmeter.spec
+.venv/bin/pyinstaller --clean Clawdmeter.spec
 
 echo ""
 echo "Built: $root/dist/Clawdmeter"
