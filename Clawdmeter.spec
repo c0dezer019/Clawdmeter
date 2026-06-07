@@ -1,6 +1,6 @@
 # Cross-platform PyInstaller spec for Clawdmeter.
 # Build with:  pyinstaller Clawdmeter.spec
-# Output:      dist/Clawdmeter.exe (Windows) or dist/Clawdmeter (Linux/macOS),
+# Output:      dist/Clawdmeter.exe (Windows) or dist/Clawdmeter (Linux),
 #              single-file, no console.
 
 # -*- mode: python ; coding: utf-8 -*-
