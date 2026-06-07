@@ -1,10 +1,17 @@
-# PyInstaller spec for Clawdmeter-Windows.
+# Cross-platform PyInstaller spec for Clawdmeter.
 # Build with:  pyinstaller Clawdmeter.spec
-# Output:      dist/Clawdmeter.exe (single-file, no console)
+# Output:      dist/Clawdmeter.exe (Windows) or dist/Clawdmeter (Linux),
+#              single-file, no console.
 
 # -*- mode: python ; coding: utf-8 -*-
 
+import sys
+
 block_cipher = None
+
+# Windows wants .ico; Linux/macOS use the .png. The spec runs on the build
+# host, so sys.platform reflects the target of a native build.
+_icon = 'assets/icon.ico' if sys.platform == 'win32' else 'assets/icon.png'
 
 a = Analysis(
     ['src/main.py'],
@@ -61,5 +68,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='assets/icon.ico',
+    icon=_icon,
 )

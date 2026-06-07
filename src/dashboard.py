@@ -8,6 +8,7 @@ slide-in settings panel on the right.
 from __future__ import annotations
 
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -66,6 +67,24 @@ from transcript import (
 )
 
 
+# Title-bar control glyphs. Windows uses Segoe Fluent Icons / MDL2 Assets
+# Private-Use-Area codepoints (the same ones the OS itself uses). Those fonts
+# don't exist on Linux, so fall back to standard Unicode symbols that ship in
+# DejaVu Sans (and most desktop fonts), which the stylesheet font-family lists.
+if sys.platform == "win32":
+    GLYPH_SETTINGS = ""   # gear
+    GLYPH_MIN = ""        # ChromeMinimize
+    GLYPH_MAX = ""        # ChromeMaximize
+    GLYPH_RESTORE = ""    # ChromeRestore
+    GLYPH_CLOSE = ""      # ChromeClose
+else:
+    GLYPH_SETTINGS = "⚙"   # ⚙ gear
+    GLYPH_MIN = "−"        # − minus
+    GLYPH_MAX = "□"        # □ white square
+    GLYPH_RESTORE = "❐"    # ❐ restore
+    GLYPH_CLOSE = "✕"      # ✕ multiplication x
+
+
 STYLESHEET = """
 QWidget#root {
     background-color: #0e1116;
@@ -79,7 +98,7 @@ QLabel#titleAppName {
 QToolButton#titleBtn, QToolButton#closeBtn, QToolButton#settingsBtn {
     background: transparent; color: #CE7D6B; border: 0;
     min-width: 38px; min-height: 30px;
-    font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets";
+    font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets", "DejaVu Sans", "Noto Sans Symbols2", sans-serif;
 }
 QToolButton#titleBtn, QToolButton#closeBtn { font-size: 11px; }
 QToolButton#settingsBtn { font-size: 16px; }
@@ -94,7 +113,7 @@ QLabel#reset { font-size: 12px; color: #9ca3af; }
 QLabel#statusText { font-size: 12px; font-weight: 600; }
 QLabel#statusText[level="warn"] { color: #f59e0b; }
 QLabel#statusText[level="block"] { color: #dc2626; }
-QLabel#statusIcon { font-size: 14px; font-family: "Segoe UI Emoji"; }
+QLabel#statusIcon { font-size: 14px; font-family: "Segoe UI Emoji", "Noto Color Emoji", "Noto Emoji"; }
 
 QPushButton {
     background-color: #1f2937; color: #e6edf3; border: 1px solid #374151;
@@ -249,20 +268,20 @@ class TitleBar(QWidget):
 
         # Glyphs from Segoe Fluent Icons / Segoe MDL2 Assets — the same
         # codepoints Windows itself uses for window controls.
-        self.settings_btn = self._tool_btn("", "Settings")   # gear
+        self.settings_btn = self._tool_btn(GLYPH_SETTINGS, "Settings")   # gear
         self.settings_btn.setObjectName("settingsBtn")
         self.settings_btn.clicked.connect(on_settings)
         row.addWidget(self.settings_btn)
 
-        self.min_btn = self._tool_btn("", "Minimize")        # ChromeMinimize
+        self.min_btn = self._tool_btn(GLYPH_MIN, "Minimize")        # ChromeMinimize
         self.min_btn.clicked.connect(self._win.showMinimized)
         row.addWidget(self.min_btn)
 
-        self.max_btn = self._tool_btn("", "Maximize")        # ChromeMaximize
+        self.max_btn = self._tool_btn(GLYPH_MAX, "Maximize")        # ChromeMaximize
         self.max_btn.clicked.connect(self._toggle_max)
         row.addWidget(self.max_btn)
 
-        self.close_btn = self._tool_btn("", "Close")         # ChromeClose
+        self.close_btn = self._tool_btn(GLYPH_CLOSE, "Close")         # ChromeClose
         self.close_btn.setObjectName("closeBtn")
         self.close_btn.clicked.connect(self._win.close)
         row.addWidget(self.close_btn)
@@ -279,10 +298,10 @@ class TitleBar(QWidget):
     def _toggle_max(self) -> None:
         if self._win.isMaximized():
             self._win.showNormal()
-            self.max_btn.setText("")  # ChromeMaximize
+            self.max_btn.setText(GLYPH_MAX)  # ChromeMaximize
         else:
             self._win.showMaximized()
-            self.max_btn.setText("")  # ChromeRestore
+            self.max_btn.setText(GLYPH_RESTORE)  # ChromeRestore
 
     def mousePressEvent(self, e) -> None:
         if e.button() == Qt.LeftButton:
@@ -295,7 +314,7 @@ class TitleBar(QWidget):
         if self._win.isMaximized():
             # Restore on drag, like Windows: re-anchor cursor proportionally.
             self._win.showNormal()
-            self.max_btn.setText("")  # ChromeMaximize
+            self.max_btn.setText(GLYPH_MAX)  # ChromeMaximize
             geo = self._win.frameGeometry()
             self._drag_offset = QPoint(geo.width() // 2, self.HEIGHT // 2)
         self._win.move(e.globalPosition().toPoint() - self._drag_offset)
