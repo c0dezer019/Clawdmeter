@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Clawdmeter
+Comment=Claude usage meter in your system tray
+Exec=Clawdmeter
+Icon=clawdmeter
+Categories=Utility;Monitor;
+Terminal=false
+StartupNotify=false
