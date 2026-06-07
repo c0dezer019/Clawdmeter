@@ -54,7 +54,7 @@ EOF
 chmod +x "$appdir/AppRun"
 
 out="dist/Clawdmeter-${version}-x86_64.AppImage"
-ARCH=x86_64 "$tool" "$appdir" "$out"
+ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$tool" "$appdir" "$out"
 
 echo ""
 echo "Built: $root/$out"
